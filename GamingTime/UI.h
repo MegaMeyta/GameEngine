@@ -38,8 +38,8 @@ public:
     sf::RectangleShape button5;
 
     void createUI() {
-        float desktopWidth = sf::VideoMode::getDesktopMode().width - 100;
-        float desktopHeight = sf::VideoMode::getDesktopMode().height - 100;
+        float desktopWidth = sf::VideoMode::getDesktopMode().width - 150;
+        float desktopHeight = sf::VideoMode::getDesktopMode().height - 150;
         button.setSize(sf::Vector2f(desktopWidth / 5, desktopHeight / 8));
         button2.setSize(sf::Vector2f(desktopWidth / 5, desktopHeight / 8));
         button3.setSize(sf::Vector2f(desktopWidth / 5, desktopHeight / 8));
@@ -77,8 +77,8 @@ public:
     }
 
     void resizeUI(float x, float y) {
-        float desktopWidth = sf::VideoMode::getDesktopMode().width - 100;
-        float desktopHeight = sf::VideoMode::getDesktopMode().height - 100;
+        float desktopWidth = sf::VideoMode::getDesktopMode().width - 150;
+        float desktopHeight = sf::VideoMode::getDesktopMode().height - 150;
         button.setScale(x,y);
         button2.setScale(x, y);
         button3.setScale(x, y);

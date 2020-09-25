@@ -9,8 +9,8 @@ using namespace std;
 
 int main()
 {
-    float desktopWidth= sf::VideoMode::getDesktopMode().width - 100;
-    float desktopHeight = sf::VideoMode::getDesktopMode().height - 100;
+    float desktopWidth= sf::VideoMode::getDesktopMode().width - 150;
+    float desktopHeight = sf::VideoMode::getDesktopMode().height - 150;
 
     sf::RenderWindow window(sf::VideoMode(desktopWidth, desktopHeight), "SFML works!");
     sf::CircleShape shape(100.f);
