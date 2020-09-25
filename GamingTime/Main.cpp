@@ -1,18 +1,16 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-#include <list>
 #include <string.h>
 #include <iostream>
 #include "UI.h"
+#include "global.h"
 
 using namespace std;
 
 int main()
 {
-    float desktopWidth= sf::VideoMode::getDesktopMode().width - 150;
-    float desktopHeight = sf::VideoMode::getDesktopMode().height - 150;
 
-    sf::RenderWindow window(sf::VideoMode(desktopWidth, desktopHeight), "SFML works!");
+    sf::RenderWindow window(sf::VideoMode(desktopWidth, desktopHeight), "SFML works!", sf::Style::Titlebar|| sf::Style::Close);
     sf::CircleShape shape(100.f);
     sf::Font font;
     if (!font.loadFromFile("University.ttf")) {
@@ -61,7 +59,7 @@ int main()
        }
 
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            text.setString(buttonPressed(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y, gameWidth, gameHeight, window));
+            text.setString(buttonPressed(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y, gameWidth, gameHeight, window));
         }
 
         window.clear();
