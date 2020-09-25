@@ -10,26 +10,40 @@ using namespace std;
 int main()
 {
 
-    sf::RenderWindow window(sf::VideoMode(desktopWidth, desktopHeight), "SFML works!", sf::Style::Titlebar|| sf::Style::Close);
+    sf::Texture paper;
+    if (!paper.loadFromFile("paper.jpg")) {
+        cout << "error";
+    }
+    sf::Texture gear;
+    if (!gear.loadFromFile("gear.png")) {
+        cout << "error";
+    }
+    sf::RectangleShape settings(sf::Vector2f(desktopWidth/12, desktopWidth/12));
+    sf::RectangleShape mainBackground(sf::Vector2f(desktopWidth, desktopHeight));
+    mainBackground.setTexture(&paper);
+    settings.setTexture(&gear);
     sf::CircleShape shape(100.f);
     sf::Font font;
     if (!font.loadFromFile("University.ttf")) {
         cout << "font did not load";
     }
     sf::Text text;
-    text.setPosition(desktopWidth/2, desktopHeight/2);
     text.setCharacterSize(25);
-    text.setFillColor(sf::Color::White);
+    text.setFillColor(sf::Color::Black);
     text.setFont(font);
     text.setString("No Button");
     text.setStyle(sf::Text::Bold | sf::Text::Underlined);
+    sf::FloatRect textRect = text.getLocalBounds();
+    text.setOrigin(textRect.left + textRect.width / 2.0f,
+        textRect.top + textRect.height / 2.0f);
+    text.setPosition(desktopWidth / 2, desktopHeight / 2);
     shape.setFillColor(sf::Color::Green);
 
     UI mainUI;
     mainUI.createUI();
 
-    float gameWidth = desktopWidth;
-    float gameHeight = desktopHeight;
+    gameWidth = desktopWidth;
+    gameHeight = desktopHeight;
 
     while (window.isOpen())
     {
@@ -51,7 +65,7 @@ int main()
 
             window.clear();
 
-            mainUI.printUI(window);
+            mainUI.printUI();
 
             window.draw(text);
 
@@ -59,13 +73,20 @@ int main()
        }
 
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            text.setString(buttonPressed(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y, gameWidth, gameHeight, window));
+            text.setString(buttonPressed(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y, gameWidth, gameHeight));
+            textRect = text.getLocalBounds();
+            text.setOrigin(textRect.left + textRect.width / 2.0f,
+                textRect.top + textRect.height / 2.0f);
+            text.setPosition(desktopWidth / 2, desktopHeight / 2);
         }
 
         window.clear();
+
         
-        mainUI.printUI(window);
+        window.draw(mainBackground);
+        mainUI.printUI();
         window.draw(text);
+        window.draw(settings);
 
         window.display();
     }

@@ -7,3 +7,6 @@
 
 float desktopWidth = sf::VideoMode::getDesktopMode().width / 2;
 float desktopHeight = sf::VideoMode::getDesktopMode().height / 2;
+float gameWidth = desktopWidth;
+float gameHeight = desktopHeight;
+sf::RenderWindow window(sf::VideoMode(desktopWidth, desktopHeight), "SFML works!", sf::Style::Titlebar || sf::Style::Close);

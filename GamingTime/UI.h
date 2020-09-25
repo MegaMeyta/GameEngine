@@ -8,10 +8,10 @@
 
 using namespace std;
 
-string buttonPressed(int x, int y, int width, int height, sf::RenderWindow& window) {
-	if (x < width / 5 && y >(height / 8) * 7) {
+string buttonPressed(int x, int y, int width, int height) {
+    if (x < width / 5 && y >(height / 8) * 7) {
         return string("button 1");
-	}
+    }
     else if (x < (width / 5) * 2 && y >(height / 8) * 7) {
         return string("button 2");
     }
@@ -24,9 +24,16 @@ string buttonPressed(int x, int y, int width, int height, sf::RenderWindow& wind
     else if (x < (width / 5) * 5 && y >(height / 8) * 7) {
         return string("button 5");
     }
+    else if (x < desktopWidth / 12 && y < desktopWidth / 12) {
+        return "settings";
+    }
     else {
         return "No button";
     }
+}
+
+void popUpMenu(int amount) {
+
 }
 
 class UI {
@@ -37,6 +44,8 @@ public:
     sf::RectangleShape button3;
     sf::RectangleShape button4;
     sf::RectangleShape button5;
+    sf::RectangleShape settings; 
+    sf::Texture gear;
 
     void createUI() {
         button.setSize(sf::Vector2f(desktopWidth / 5, desktopHeight / 8));
@@ -67,7 +76,7 @@ public:
 
     }
 
-    void printUI(sf::RenderWindow& window) {
+    void printUI() {
         window.draw(button);
         window.draw(button2);
         window.draw(button3);
