@@ -5,8 +5,15 @@
 #include <string.h>
 #include <iostream>
 
-float desktopWidth = sf::VideoMode::getDesktopMode().width / 1;
-float desktopHeight = sf::VideoMode::getDesktopMode().height / 1;
-float gameWidth = desktopWidth;
-float gameHeight = desktopHeight;
-sf::RenderWindow window(sf::VideoMode(desktopWidth, desktopHeight), "SFML works!", sf::Style::Close);
+
+ float desktopWidth = sf::VideoMode::getDesktopMode().width / 1.5;
+ float desktopHeight = sf::VideoMode::getDesktopMode().height / 1.5;
+ float gameWidth = desktopWidth;
+ float gameHeight = desktopHeight;
+ sf::RenderWindow window(sf::VideoMode(desktopWidth, desktopHeight), "SFML works!", sf::Style::Close);;
+
+
+
+
+
+

@@ -155,6 +155,9 @@
     <Image Include="gear.png" />
     <Image Include="paper.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="walls.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
