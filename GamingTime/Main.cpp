@@ -5,67 +5,32 @@
 #include <windows.h>
 #include <list>
 #include <fstream>
-#include "UI.h"
+#include "Game.h"
 #include "global.h"
 
 using namespace std;
 
-bool mleft = false;
-bool mright = false;
-bool mup = false;
-bool mdown = false;
-float offsetx;
-float offsety;
-
-void buttonPressed(int x, int y, int width, int height, int& paused);
-
-void keyPressed(player& man, boundry& tester);
-
-void movePlayer(player& man, boundry& tester);
 
 int main()
 {
-    int paused = 0;
-
-    boundry tester;
-    tester.create("walls.txt");
-
-    offsetx = 0;
-    offsety = 0;
-
-    //BACKGROUND
-    sf::Texture paper;
-    sf::RectangleShape mainBackground(sf::Vector2f(desktopWidth, desktopHeight));
-    if (!paper.loadFromFile("paper.jpg")) {
-        cout << "background texture error";
-    }
-    mainBackground.setTexture(&paper);
-
-    //SETTINGS
-    sf::Sprite settings;
-    sf::Texture gear;
-    if (!gear.loadFromFile("gear.png")) {
-        cout << "error";
-    }
     
-    settings.setTexture(gear);
-    float settingsScale = settings.getLocalBounds().width / (desktopWidth/12);
-    cout << settingsScale;
-    settings.setScale(1/settingsScale,1/settingsScale);
-
-    player man;
-
-    menuUI pause;
-
-    man.create(sf::Vector2f(desktopWidth/2-50, desktopHeight/2-50), 100,100);
-
-    pause.createUI();
-
-    int face;
+    sf::RectangleShape background(sf::Vector2f(desktopWidth, desktopHeight));
+    sf::RectangleShape Title(sf::Vector2f(desktopWidth / 3, desktopHeight / 8));
+    sf::RectangleShape button(sf::Vector2f(desktopWidth / 5, desktopHeight / 12));
+    sf::RectangleShape button2(sf::Vector2f(desktopWidth / 5, desktopHeight / 12));
+    sf::RectangleShape button3(sf::Vector2f(desktopWidth / 5, desktopHeight / 12));
+    sf::RectangleShape button4(sf::Vector2f(desktopWidth / 5, desktopHeight / 12));
+    Title.setPosition(0,40);
+    background.setFillColor(sf::Color::Black);
+    Title.setFillColor(sf::Color::Red);
+    button.setPosition(0, Title.getSize().y + 90);
+    button2.setPosition((0), button.getPosition().y + button.getSize().y + 30);
+    button3.setPosition(0, button2.getPosition().y + button2.getSize().y + 30);
+    button4.setPosition(0, button3.getPosition().y + button3.getSize().y + 30);
 
     while (window.isOpen())
     {
-        face = 0;
+        
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -73,126 +38,19 @@ int main()
                 window.close();
         }
 
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            
-            buttonPressed(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y, gameWidth, gameHeight, paused);
-            Sleep(100);
-        }
-
-        keyPressed( man, tester);
-        movePlayer(man, tester);
 
         window.clear();
         
-        window.draw(mainBackground);
-        tester.print(offsetx, offsety);
-        man.print(window);
-         
-
-        if (paused == 1) {
-            pause.printUI();
-        }
-
-        window.draw(settings);
+        window.draw(background);
+        window.draw(Title);
+        window.draw(button);
+        window.draw(button2);
+        window.draw(button3);
+        window.draw(button4);
+       
         window.display();
     }
 
     return 0;
 }
 
-void buttonPressed(int x, int y, int width, int height, int& paused) {
-
-    if (paused == 0) {
-        if (x < desktopWidth / 12 && y < desktopWidth / 12) {
-            paused = 1;
-            cout << "pause";
-        }
-        else {
-            cout << "nothing pressed";
-        }
-    }
-
-    else if (paused == 1) {
-        if (x < width / 5 && y >(height / 8) * 7) {
-            cout << "button 1";
-        }
-        else if (x < (width / 5) * 2 && y >(height / 8) * 7) {
-            cout << "button 2";
-        }
-        else if (x < (width / 5) * 3 && y >(height / 8) * 7) {
-            cout << "button 3";
-        }
-        else if (x < (width / 5) * 4 && y >(height / 8) * 7) {
-            cout << "button 4";
-        }
-        else if (x < (width / 5) * 5 && y >(height / 8) * 7) {
-            cout << "button 5";
-        }
-        else if (x < desktopWidth / 12 && y < desktopWidth / 12) {
-            paused = 0;
-            cout << "unpause";
-        }
-        else {
-            cout << "nothing pressed";
-        }
-    }
-}
-
-void keyPressed( player& man, boundry& tester) {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-        mleft = true;
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-        mright = true;
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-        mup = true;
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-        mdown = true;
-    }
-}
-
-void movePlayer(player& man, boundry& tester) {
-    sf::Vector2f location = man.getLocation();
-    sf::Vector2f size = man.getSize();
-    tester.testcolision(location.x, location.y, size.x, size.y, offsetx, offsety);
-    if (mleft) {
-        if (test[0] == 0) {
-            //man.movebox(-10, 0);
-            offsetx += 10;
-        }
-    }
-
-    if (mright) {
-        if (test[1] == 0) {
-            //man.movebox(10, 0);
-            offsetx -= 10;
-        }
-    }
-
-    if (mup) {
-        if (test[2] == 0) {
-            //man.movebox(0, -10);
-            offsety += 10;
-        }
-    }
-
-    if (mdown) {
-        if (test[3] == 0) {
-            //man.movebox(0, 10);
-            offsety -= 10;
-        }
-    }
-
-    Sleep(10);
-
-    mright = false;
-    mleft = false;
-    mup = false;
-    mdown = false;
-
-}
