@@ -17,22 +17,24 @@ bool mup = false;
 bool mdown = false;
 float offsetx;
 float offsety;
+bool exitgame = false;
 
 void buttonPressed(int x, int y, int width, int height, int& paused);
 
-void keyPressed(player& man, boundry& tester);
+void keyPressed(player& man, boundry& tester, npc& josh);
 
-void movePlayer(player& man, boundry& tester);
+void movePlayer(player& man, boundry& tester, npc& josh);
 
 void game()
 {
     int paused = 0;
 
-    boundry tester;
-    tester.create("walls.txt");
+    boundry tester("walls.txt");
 
     offsetx = 0;
     offsety = 0;
+
+    interact = false;
 
     //BACKGROUND
     sf::Texture paper;
@@ -53,12 +55,14 @@ void game()
     float settingsScale = settings.getLocalBounds().width / (desktopWidth / 12);
     cout << settingsScale;
     settings.setScale(1 / settingsScale, 1 / settingsScale);
+    
+    npc josh("joshua");
 
     player man;
 
     menuUI pause;
 
-    man.create(sf::Vector2f(desktopWidth / 2 - 50, desktopHeight / 2 - 50), 100, 100);
+    man.create(sf::Vector2f(desktopWidth / 2 - 50, desktopHeight / 2 - 50), block * 2, block);
 
     pause.createUI();
 
@@ -81,15 +85,21 @@ void game()
         }
 
         if (paused == 0) {
-            keyPressed(man, tester);
-            movePlayer(man, tester);
+            keyPressed(man, tester, josh);
+            movePlayer(man, tester, josh);
+        }
+
+        if (exitgame == true) {
+            exitgame = false;
+            return;
         }
 
         window.clear();
 
         window.draw(mainBackground);
-        tester.print(offsetx, offsety);
+        tester.print();
         man.print(window);
+        josh.print();
 
 
         if (paused == 1) {
@@ -110,9 +120,6 @@ void buttonPressed(int x, int y, int width, int height, int& paused) {
             paused = 1;
             cout << "pause";
         }
-        else {
-            cout << "nothing pressed";
-        }
     }
 
     else if (paused == 1) {
@@ -129,7 +136,8 @@ void buttonPressed(int x, int y, int width, int height, int& paused) {
             cout << "button 4";
         }
         else if (x < (width / 5) * 5 && y >(height / 8) * 7) {
-            cout << "button 5";
+            cout << "End Game";
+            exitgame = true;
         }
         else if (x < desktopWidth / 12 && y < desktopWidth / 12) {
             paused = 0;
@@ -141,7 +149,7 @@ void buttonPressed(int x, int y, int width, int height, int& paused) {
     }
 }
 
-void keyPressed(player& man, boundry& tester) {
+void keyPressed(player& man, boundry& tester, npc& josh) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
         mleft = true;
     }
@@ -157,16 +165,23 @@ void keyPressed(player& man, boundry& tester) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
         mdown = true;
     }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+        interact = true;
+    }
 }
 
-void movePlayer(player& man, boundry& tester) {
+void movePlayer(player& man, boundry& tester, npc& josh) {
     sf::Vector2f location = man.getLocation();
     sf::Vector2f size = man.getSize();
-    tester.testcolision(location.x, location.y, size.x, size.y, offsetx, offsety);
+    tester.colision(location.x, location.y, size.x, size.y);
+    josh.colision(location.x, location.y, size.x, size.y);
     if (mleft) {
         if (test[0] == 0) {
             //man.movebox(-10, 0);
             offsetx += 10;
+            tester.move(10, 0);
+            josh.move(10, 0);
         }
     }
 
@@ -174,6 +189,8 @@ void movePlayer(player& man, boundry& tester) {
         if (test[1] == 0) {
             //man.movebox(10, 0);
             offsetx -= 10;
+            tester.move(-10, 0);
+            josh.move(-10, 0);
         }
     }
 
@@ -181,6 +198,8 @@ void movePlayer(player& man, boundry& tester) {
         if (test[2] == 0) {
             //man.movebox(0, -10);
             offsety += 10;
+            tester.move(0, 10);
+            josh.move(0, 10);
         }
     }
 
@@ -188,7 +207,13 @@ void movePlayer(player& man, boundry& tester) {
         if (test[3] == 0) {
             //man.movebox(0, 10);
             offsety -= 10;
+            tester.move(0, -10);
+            josh.move(0, -10);
         }
+    }
+
+    if (interact) {
+        josh.interaction(location.x, location.y, size.x, size.y);
     }
 
     Sleep(10);
@@ -197,5 +222,6 @@ void movePlayer(player& man, boundry& tester) {
     mleft = false;
     mup = false;
     mdown = false;
+    interact = false;
 
 }

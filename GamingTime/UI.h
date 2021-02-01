@@ -119,147 +119,12 @@ public:
     }
 };
 
-class boundry {
-public:
-    sf::RectangleShape wall;
-    ifstream file;
-    string fileName;
-
-    void create(string name) {
-        fileName = name;
-    }
-
-    void print(int offsetx, int offsety) {
-        
-        file.open(fileName);
-        if (file.is_open()) {
-            int end = 0;
-            float width;
-            float height;
-            float x;
-            float y;
-            while (file >> width >> height >> x >> y) {
-                    
-                    wall.setSize(sf::Vector2f(width, height));
-                    wall.setPosition(x + offsetx, y + offsety);
-                    wall.setFillColor(sf::Color::Black);
-                    window.draw(wall);
-            }
-            file.close();
-        }
-
-        else {
-            cout << "file did not open";
-        }
-    }
-
-    bool colision(float x, float y, float width, float height, int face) {
-
-        float wallW;
-        float wallH;
-        float wallX;
-        float wallY;
-        int count = 0;
-        file.open(fileName);
-        if (file.is_open()) {
-            while (file >> wallW >> wallH >> wallX >> wallY || count < 5) {
-                
-                float x1 = wallX ;
-                float x2 = wallX + wallW;
-                float y1 = wallY;
-                float y2 = wallY + wallH;
-
-                if (face == 1) {
-                    if (y > y1 - height && y < y2 && x == x2) {
-                        
-                        cout << "stop left\n"; 
-                        return true;
-                        
-
-                    }
-                }
-
-                if (face == 2) {
-                    if (y > y1 - height && y < y2 && x == x1 - width) {
-                        cout << "stop right\n";
-                        return true;
-                        
-
-                    }
-                }
-
-                if (face == 3) {
-                    if (x > x1 - width && x < x2 && y == y2) {
-                        cout << "stop up\n";
-                        return true;
-                        
-                    }
-                }
-
-                if (face == 4) {
-                    if (x > x1 - width && x < x2 && y == y1 - height) {
-                        cout << "stop down\n";
-                        return true;
-                        
-                    }
-                }
-
-                count++;
-            }
-            file.close();
-            return false;
-        }
-    }
-
-    void testcolision(float x, float y, float width, float height, int offsetx, int offsety) {
-        for (int a = 0; a < 4; a++) {
-            test[a] = 0;
-        }
-        float wallW;
-        float wallH;
-        float wallX;
-        float wallY;
-        int count = 0;
-        file.open(fileName);
-        if (file.is_open()) {
-            while (file >> wallW >> wallH >> wallX >> wallY || count < 5) {
-
-                float x1 = wallX + offsetx;
-                float x2 = wallX + wallW + offsetx;
-                float y1 = wallY + offsety;
-                float y2 = wallY + wallH + offsety;
-               
-                if (y > y1 - height && y < y2 && x == x2) {
-                    test[0] = 1;
-                }
-                               
-                if (y > y1 - height && y < y2 && x == x1 - width) {
-                    test[1] = 1;
-                }
-               
-                if (x > x1 - width && x < x2 && y == y2) {
-                    test[2] = 1;
-                }
-                
-                if (x > x1 - width && x < x2 && y == y1 - height) {
-                    test[3] = 1;
-                }
-               
-
-                count++;
-            }
-            file.close();
-            
-        }
-    }
-};
-
 class player {
 public:
     sf::RectangleShape guy;
 
     void create(sf::Vector2f position, int height, int width) {
-        guy.setSize(sf::Vector2f(height, width));
+        guy.setSize(sf::Vector2f(width, height));
         guy.setFillColor(sf::Color::Blue);
         guy.setPosition(position);
     }
@@ -281,3 +146,185 @@ public:
     }
 };
 
+class rectangleObject {
+public:
+    sf::RectangleShape shape;
+    bool real;
+
+    rectangleObject() {
+        real = false;
+    }
+
+    rectangleObject(float x, float y, float width, float height) {
+        shape.setPosition(sf::Vector2f(x, y));
+        shape.setSize(sf::Vector2f(width, height));
+        shape.setFillColor(sf::Color::Black);
+        real = true;
+    }
+
+    void set(float x, float y, float width, float height) {
+        shape.setPosition(sf::Vector2f(x, y));
+        shape.setSize(sf::Vector2f(width, height));
+        shape.setFillColor(sf::Color::Black);
+        real = true;
+    }
+
+    void print() {
+        window.draw(shape);
+    }
+
+    void move(float deltaX, float deltaY) {
+        shape.move(deltaX, deltaY);
+    }
+
+    void colision(float x, float y, float width, float height){
+        if (real == true) {
+            float x1 = shape.getPosition().x;
+            float x2 = shape.getPosition().x + shape.getSize().x;
+            float y1 = shape.getPosition().y;
+            float y2 = shape.getPosition().y + shape.getSize().y;
+
+            if (y > y1 - height && y < y2 && x == x2) {
+                test[0] = 1;
+            }
+
+            if (y > y1 - height && y < y2 && x == x1 - width) {
+                test[1] = 1;
+            }
+
+            if (x > x1 - width && x < x2 && y == y2) {
+                test[2] = 1;
+            }
+
+            if (x > x1 - width && x < x2 && y == y1 - height) {
+                test[3] = 1;
+            }
+        }
+    }
+
+};
+
+class npc {
+public:
+    string name;
+    string age;
+    string gender;
+    rectangleObject block;
+    float x;
+    float y;
+
+    npc(string filename) {
+        ifstream file;
+        file.open("characters/" + filename + ".txt");
+        string startx;
+        string starty;
+        if (file.is_open()) {
+            getline(file, name);
+            getline(file, age);
+            getline(file, gender);
+            getline(file, startx);
+            getline(file, starty);
+            x = stof(startx);
+            y = stof(starty);
+            block.set(stof(startx), stof(starty), 100, 100);
+            cout << "Character, " + name + ", loaded.";
+        }
+        else {
+            cout << "Character, " + filename + ", failed to load.";
+        }
+        
+    }
+
+    void print() {
+        block.print();
+    }
+
+    void move(float deltaX, float deltaY) {
+        block.move(deltaX, deltaY);
+    }
+
+    void colision(float x, float y, float width, float height) {
+        block.colision(x, y, width, height);
+    }
+
+    void interaction(float x, float y, float width, float height) {
+
+        interact = false;
+
+        float x1 = block.shape.getPosition().x - 10;
+        float x2 = block.shape.getPosition().x + block.shape.getSize().x + 10;
+        float y1 = block.shape.getPosition().y - 10;
+        float y2 = block.shape.getPosition().y + block.shape.getSize().y + 10;
+
+        cout << x1 << "\n" << x2 << "\n" << y1 << "\n" << y2 << "\n";
+
+        if (y > y1 - height && y < y2 && x == x2) {
+            interact = true;
+        }
+
+        if (y > y1 - height && y < y2 && x == x1 - width) {
+            interact = true;
+        }
+
+        if (x > x1 - width && x < x2 && y == y2) {
+            interact = true;
+        }
+
+        if (x > x1 - width && x < x2 && y == y1 - height) {
+            interact = true;
+        } 
+
+        if (interact == true) {
+            cout << "hello there \n";
+        }
+
+    }
+};
+
+class boundry {
+public:
+    vector<rectangleObject> blocks;
+    string name;
+
+    boundry(string filename) {
+        ifstream file;
+        float x;
+        float y;
+        float width;
+        float height;
+        rectangleObject temp;
+        file.open(filename);
+        if (file.is_open()) {
+            while (file >> width >> height >> x >> y) {
+                temp.set(x, y, width, height);
+                blocks.push_back(temp);
+            }
+        }
+        else {
+            cout << "file did not open";
+        }
+    }
+
+    void print() {
+        for (rectangleObject test : blocks) {
+            test.print();
+        }
+    }
+
+    void move(int deltaX, int deltaY) {
+        for (rectangleObject& test : blocks) {
+            test.move(deltaX, deltaY);
+        }
+    }
+
+    void colision(float x, float y, float width, float height) {
+        for (int a = 0; a < 4; a++) {
+            test[a] = 0;
+        }
+
+        for (rectangleObject temp : blocks) {
+            temp.colision(x, y, width, height);
+        }
+
+    }
+};
