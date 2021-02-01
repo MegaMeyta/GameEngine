@@ -14,12 +14,15 @@ using namespace std;
 int main()
 {
     
+    //Creates Rectangles for Menu
     sf::RectangleShape background(sf::Vector2f(desktopWidth, desktopHeight));
     sf::RectangleShape Title(sf::Vector2f(desktopWidth / 3, desktopHeight / 8));
     sf::RectangleShape button(sf::Vector2f(desktopWidth / 5, desktopHeight / 12));
     sf::RectangleShape button2(sf::Vector2f(desktopWidth / 5, desktopHeight / 12));
     sf::RectangleShape button3(sf::Vector2f(desktopWidth / 5, desktopHeight / 12));
     sf::RectangleShape button4(sf::Vector2f(desktopWidth / 5, desktopHeight / 12));
+
+    //Sets Color and position for menu rectangles
     Title.setPosition(0,40);
     background.setFillColor(sf::Color::Black);
     Title.setFillColor(sf::Color::Red);
@@ -38,10 +41,12 @@ int main()
                 window.close();
         }
 
+        //Functions for each button in menu
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             int x = sf::Mouse::getPosition(window).x;
             int y = sf::Mouse::getPosition(window).y;
             if (x < desktopWidth/5) {
+                //First button starts the game
                 if (y > button.getPosition().y && y < button.getPosition().y + button.getSize().y) {
                     cout << "Start Game";
                     game();

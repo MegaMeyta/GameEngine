@@ -62,7 +62,7 @@ void game()
 
     menuUI pause;
 
-    man.create(sf::Vector2f(desktopWidth / 2 - 50, desktopHeight / 2 - 50), block * 2, block);
+    man.create(sf::Vector2f(desktopWidth / 2 - (block/2), desktopHeight / 2 - (block-2)), block * 2, block);
 
     pause.createUI();
 
@@ -78,12 +78,14 @@ void game()
                 window.close();
         }
 
+        //Checks if left mouse button was clicked and calls apropriate function
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 
             buttonPressed(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y, gameWidth, gameHeight, paused);
             Sleep(100);
         }
 
+        //Allows for key presses to be registered.
         if (paused == 0) {
             keyPressed(man, tester, josh);
             movePlayer(man, tester, josh);
@@ -96,12 +98,13 @@ void game()
 
         window.clear();
 
+        //Draw functions for all elements
         window.draw(mainBackground);
         tester.print();
         man.print(window);
         josh.print();
 
-
+        //Draws pause menu
         if (paused == 1) {
             pause.printUI();
         }
@@ -113,8 +116,10 @@ void game()
     
 }
 
+//This function dictates the function called when the mouse left click is registered 
 void buttonPressed(int x, int y, int width, int height, int& paused) {
 
+    //Pauses game if mouse is clicked in the right place
     if (paused == 0) {
         if (x > 0 && y > 0 && x < desktopWidth / 12 && y < desktopWidth / 12) {
             paused = 1;
@@ -122,6 +127,7 @@ void buttonPressed(int x, int y, int width, int height, int& paused) {
         }
     }
 
+    //Calls apropriate functions for each button in the pause menu
     else if (paused == 1) {
         if (x < width / 5 && y >(height / 8) * 7) {
             cout << "button 1";
@@ -149,7 +155,9 @@ void buttonPressed(int x, int y, int width, int height, int& paused) {
     }
 }
 
+//This function enables different functions depending on what keys were registered at one time
 void keyPressed(player& man, boundry& tester, npc& josh) {
+    
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
         mleft = true;
     }
@@ -171,9 +179,12 @@ void keyPressed(player& man, boundry& tester, npc& josh) {
     }
 }
 
+//This function moves the player depending on which functions were enabled by keyPressed
 void movePlayer(player& man, boundry& tester, npc& josh) {
     sf::Vector2f location = man.getLocation();
+    //cout << "Location: " << location.x << " " << location.y << "\n";
     sf::Vector2f size = man.getSize();
+    //cout << "Size: " << size.x << " " << size.y << "\n";
     tester.colision(location.x, location.y, size.x, size.y);
     josh.colision(location.x, location.y, size.x, size.y);
     if (mleft) {
