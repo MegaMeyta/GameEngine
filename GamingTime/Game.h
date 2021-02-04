@@ -18,12 +18,18 @@ bool mdown = false;
 float offsetx;
 float offsety;
 bool exitgame = false;
+float screenX;
+float screenY;
+float boundaryX = 100;
+float boundaryY = 100;
 
 void buttonPressed(int x, int y, int width, int height, int& paused);
 
 void keyPressed(player& man, boundry& tester, npc& josh);
 
 void movePlayer(player& man, boundry& tester, npc& josh);
+
+void spawn(float spawnX, float spawnY);
 
 void game()
 {
@@ -58,11 +64,17 @@ void game()
     
     npc josh("joshua");
 
-    player man;
+    player man(24, 24, 1,2);
 
     menuUI pause;
 
-    man.create(sf::Vector2f(desktopWidth / 2 - (block/2), desktopHeight / 2 - (block-2)), block * 2, block);
+    float boundaryX;
+    float boundaryY;
+
+    spawn(24, 24);
+
+    offsetx = screenX;
+    offsety = screenY;
 
     pause.createUI();
 
@@ -100,8 +112,8 @@ void game()
 
         //Draw functions for all elements
         window.draw(mainBackground);
-        tester.print();
-        man.print(window);
+        tester.print(screenX, screenY);
+        man.print(window, screenX, screenY);
         josh.print();
 
         //Draws pause menu
@@ -182,44 +194,53 @@ void keyPressed(player& man, boundry& tester, npc& josh) {
 //This function moves the player depending on which functions were enabled by keyPressed
 void movePlayer(player& man, boundry& tester, npc& josh) {
     sf::Vector2f location = man.getLocation();
-    //cout << "Location: " << location.x << " " << location.y << "\n";
     sf::Vector2f size = man.getSize();
-    //cout << "Size: " << size.x << " " << size.y << "\n";
-    tester.colision(location.x, location.y, size.x, size.y);
-    josh.colision(location.x, location.y, size.x, size.y);
+    tester.colision(man.playerX, man.playerY, man.playerW, man.playerH);
+    //josh.colision(location.x, location.y, size.x, size.y);
     if (mleft) {
         if (test[0] == 0) {
-            //man.movebox(-10, 0);
-            offsetx += 10;
-            tester.move(10, 0);
-            josh.move(10, 0);
+            if (man.playerX > 0) {
+                man.move(-0.2, 0);
+            }
+            if (man.playerX <= boundaryX - (width / 2) && man.playerX >= width / 2) {
+                screenX = screenX - 0.2;
+            }
+            //offsetx += 10;
+            //tester.move(10, 0);
+            //josh.move(10, 0);
         }
     }
 
     if (mright) {
         if (test[1] == 0) {
-            //man.movebox(10, 0);
-            offsetx -= 10;
-            tester.move(-10, 0);
-            josh.move(-10, 0);
+            if (man.playerX < boundaryX) {
+                man.move(0.2, 0);
+            }
+            if (man.playerX <= boundaryX - (width / 2) && man.playerX >= width / 2) {
+                screenX = screenX + 0.2;
+            }
         }
     }
 
     if (mup) {
         if (test[2] == 0) {
-            //man.movebox(0, -10);
-            offsety += 10;
-            tester.move(0, 10);
-            josh.move(0, 10);
+            if (man.playerY > 0) {
+                man.move(0, -0.2);
+            }
+            if (man.playerY <= boundaryY - (height / 2) && man.playerY >= height / 2) {
+                screenY = screenY - 0.2;
+            }
         }
     }
 
     if (mdown) {
         if (test[3] == 0) {
-            //man.movebox(0, 10);
-            offsety -= 10;
-            tester.move(0, -10);
-            josh.move(0, -10);
+            if (man.playerY < boundaryY) {
+                man.move(0, 0.2);
+            }
+            if (man.playerY <= boundaryY - (height / 2) && man.playerY >= height / 2) {
+                screenY = screenY + 0.2;
+            }
         }
     }
 
@@ -235,4 +256,28 @@ void movePlayer(player& man, boundry& tester, npc& josh) {
     mdown = false;
     interact = false;
 
+}
+
+void spawn(float spawnX, float spawnY) {
+
+    if (spawnX >= boundaryX - (width / 2)) {
+        screenX = boundaryX - width;
+    }
+    else if (spawnX < width / 2) {
+        screenX = 0;
+    }
+    else {
+        screenX = spawnX - width / 2;
+    }
+    if (spawnY >= boundaryY - (height / 2)) {
+        screenY = boundaryY - height;
+    }
+    else if (spawnY < height/ 2) {
+        screenY = 0;
+    }
+    else {
+        screenY = spawnY - height / 2;
+    }
+
+    cout << screenX << " " << screenY << "\n";
 }

@@ -122,19 +122,30 @@ public:
 class player {
 public:
     sf::RectangleShape guy;
+    float playerX;
+    float playerY;
+    float playerH;
+    float playerW;
+    
+    player(float x, float y, float w, float h) {
+        playerX = x;
+        playerY = y;
+        playerW = w;
+        playerH = h;
+    }
 
-    void create(sf::Vector2f position, int height, int width) {
-        guy.setSize(sf::Vector2f(width, height));
+    void move(float x, float y) {
+        playerX += x;
+        playerY += y;
+    }
+
+    void print(sf::RenderWindow& window, float screenX, float screenY) {
+        guy.setSize(sf::Vector2f(playerW * block, playerH * block));
+        cout << playerX - screenX << " " << playerY - screenY << "\n";
+        guy.setPosition((playerX - screenX)*block, (playerY - screenY)*block);
         guy.setFillColor(sf::Color::Blue);
-        guy.setPosition(position);
-    }
-
-    void movebox(int x, int y) {
-        guy.move(x, y);
-    }
-
-    void print(sf::RenderWindow& window) {
         window.draw(guy);
+        cout << guy.getPosition().x / block << " " << guy.getPosition().y / block << "\n";
     }
 
     sf::Vector2f getLocation() {
@@ -150,6 +161,10 @@ class rectangleObject {
 public:
     sf::RectangleShape shape;
     bool real;
+    float objectX;
+    float objectY;
+    float objectW;
+    float objectH;
 
     rectangleObject() {
         real = false;
@@ -159,6 +174,12 @@ public:
         shape.setPosition(sf::Vector2f(x, y));
         shape.setSize(sf::Vector2f(width, height));
         shape.setFillColor(sf::Color::Black);
+
+        objectX = x;
+        objectY = y;
+        objectW = width;
+        objectH = height;
+
         real = true;
     }
 
@@ -166,11 +187,22 @@ public:
         shape.setPosition(sf::Vector2f(x, y));
         shape.setSize(sf::Vector2f(width, height));
         shape.setFillColor(sf::Color::Black);
+
+        objectX = x;
+        objectY = y;
+        objectW = width;
+        objectH = height;
+
         real = true;
     }
 
-    void print() {
+    void print(float screenX, float screenY) {
+        shape.setPosition((objectX - screenX) * block, (objectY - screenY) * block);
+        shape.setSize(sf::Vector2f(objectW * block, objectH * block));
+        shape.setFillColor(sf::Color::Black);
         window.draw(shape);
+
+        cout << objectX - screenX << " " << objectY - screenY << "\n";
     }
 
     void move(float deltaX, float deltaY) {
@@ -179,27 +211,29 @@ public:
 
     void colision(float x, float y, float width, float height){
         if (real == true) {
-            float x1 = shape.getPosition().x;
-            float x2 = shape.getPosition().x + shape.getSize().x;
-            float y1 = shape.getPosition().y;
-            float y2 = shape.getPosition().y + shape.getSize().y;
+            float x1 = objectX;
+            float x2 = objectX + objectW;
+            float y1 = objectY;
+            float y2 = objectY + objectH;
 
-            if (y > y1 - height && y < y2 && x == x2) {
+            if (y > y1 - height && y < y2 && x < x2 +0.2 ) {
                 test[0] = 1;
             }
 
-            if (y > y1 - height && y < y2 && x == x1 - width) {
+            if (y > y1 - height && y < y2 && x > x1 - width - 0.2) {
                 test[1] = 1;
             }
 
-            if (x > x1 - width && x < x2 && y == y2) {
+            if (x > x1 - width && x < x2 && y < y2 + 0.2) {
                 test[2] = 1;
             }
 
-            if (x > x1 - width && x < x2 && y == y1 - height) {
+            if (x > x1 - width && x < x2 && y > y1 - height - 0.2) {
                 test[3] = 1;
             }
         }
+        //cout << test[0] << " " << test[2] << " " << test[3] << " " << test[4] << "\n";
+        //cout << x + width << " " << y + height << " " << shape.getPosition().x << " " << shape.getPosition().y << "\n";
     }
 
 };
@@ -236,7 +270,7 @@ public:
     }
 
     void print() {
-        block.print();
+        block.print(0,0);
     }
 
     void move(float deltaX, float deltaY) {
@@ -305,9 +339,9 @@ public:
         }
     }
 
-    void print() {
+    void print(float screenX, float screenY) {
         for (rectangleObject test : blocks) {
-            test.print();
+            test.print(screenX, screenY);
         }
     }
 
