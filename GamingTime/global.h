@@ -8,11 +8,11 @@
 
  float desktopWidth = sf::VideoMode::getDesktopMode().width / 1.5;
  float desktopHeight = sf::VideoMode::getDesktopMode().height / 1.5;
- float height = 24;
- float block = desktopHeight / height;
- float width = desktopWidth / block;
- float gameWidth = desktopWidth;
- float gameHeight = desktopHeight;
+ double height = 24;
+ double block = desktopHeight / height;
+ double width = desktopWidth / block;
+ double gameWidth = desktopWidth;
+ double gameHeight = desktopHeight;
  bool interact;
  sf::RenderWindow window(sf::VideoMode(desktopWidth, desktopHeight), "SFML works!", sf::Style::Close);;
 

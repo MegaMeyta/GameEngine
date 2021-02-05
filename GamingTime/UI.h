@@ -122,30 +122,28 @@ public:
 class player {
 public:
     sf::RectangleShape guy;
-    float playerX;
-    float playerY;
-    float playerH;
-    float playerW;
+    double playerX;
+    double playerY;
+    double playerH;
+    double playerW;
     
-    player(float x, float y, float w, float h) {
+    player(double x, double y, double w, double h) {
         playerX = x;
         playerY = y;
         playerW = w;
         playerH = h;
     }
 
-    void move(float x, float y) {
+    void move(double x, double y) {
         playerX += x;
         playerY += y;
     }
 
-    void print(sf::RenderWindow& window, float screenX, float screenY) {
+    void print(sf::RenderWindow& window, double screenX, double screenY) {
         guy.setSize(sf::Vector2f(playerW * block, playerH * block));
-        cout << playerX - screenX << " " << playerY - screenY << "\n";
         guy.setPosition((playerX - screenX)*block, (playerY - screenY)*block);
         guy.setFillColor(sf::Color::Blue);
         window.draw(guy);
-        cout << guy.getPosition().x / block << " " << guy.getPosition().y / block << "\n";
     }
 
     sf::Vector2f getLocation() {
@@ -159,22 +157,22 @@ public:
 
 class rectangleObject {
 public:
-    sf::RectangleShape shape;
+    
     bool real;
-    float objectX;
-    float objectY;
-    float objectW;
-    float objectH;
+    double objectX;
+    double objectY;
+    double objectW;
+    double objectH;
 
     rectangleObject() {
         real = false;
+        objectX = 0;
+        objectY = 0;
+        objectW = 0;
+        objectH = 0;
     }
 
-    rectangleObject(float x, float y, float width, float height) {
-        shape.setPosition(sf::Vector2f(x, y));
-        shape.setSize(sf::Vector2f(width, height));
-        shape.setFillColor(sf::Color::Black);
-
+    rectangleObject(double x, double y, double width, double height) {
         objectX = x;
         objectY = y;
         objectW = width;
@@ -183,11 +181,7 @@ public:
         real = true;
     }
 
-    void set(float x, float y, float width, float height) {
-        shape.setPosition(sf::Vector2f(x, y));
-        shape.setSize(sf::Vector2f(width, height));
-        shape.setFillColor(sf::Color::Black);
-
+    void set(double x, double y, double width, double height) {
         objectX = x;
         objectY = y;
         objectW = width;
@@ -196,25 +190,20 @@ public:
         real = true;
     }
 
-    void print(float screenX, float screenY) {
+    void print(double screenX, double screenY) {
+        sf::RectangleShape shape;
         shape.setPosition((objectX - screenX) * block, (objectY - screenY) * block);
         shape.setSize(sf::Vector2f(objectW * block, objectH * block));
         shape.setFillColor(sf::Color::Black);
         window.draw(shape);
-
-        cout << objectX - screenX << " " << objectY - screenY << "\n";
     }
 
-    void move(float deltaX, float deltaY) {
-        shape.move(deltaX, deltaY);
-    }
-
-    void colision(float x, float y, float width, float height){
+    void colision(double x, double y, double width, double height){
         if (real == true) {
-            float x1 = objectX;
-            float x2 = objectX + objectW;
-            float y1 = objectY;
-            float y2 = objectY + objectH;
+            double x1 = objectX;
+            double x2 = objectX + objectW;
+            double y1 = objectY;
+            double y2 = objectY + objectH;
 
             if (y > y1 - height && y < y2 && x < x2 +0.2 ) {
                 test[0] = 1;
@@ -232,8 +221,6 @@ public:
                 test[3] = 1;
             }
         }
-        //cout << test[0] << " " << test[2] << " " << test[3] << " " << test[4] << "\n";
-        //cout << x + width << " " << y + height << " " << shape.getPosition().x << " " << shape.getPosition().y << "\n";
     }
 
 };
@@ -244,8 +231,8 @@ public:
     string age;
     string gender;
     rectangleObject block;
-    float x;
-    float y;
+    double x;
+    double y;
 
     npc(string filename) {
         ifstream file;
@@ -265,6 +252,8 @@ public:
         }
         else {
             cout << "Character, " + filename + ", failed to load.";
+            x = 0;
+            y = 0;
         }
         
     }
@@ -273,15 +262,12 @@ public:
         block.print(0,0);
     }
 
-    void move(float deltaX, float deltaY) {
-        block.move(deltaX, deltaY);
-    }
 
     void colision(float x, float y, float width, float height) {
         block.colision(x, y, width, height);
     }
 
-    void interaction(float x, float y, float width, float height) {
+    /*void interaction(float x, float y, float width, float height) {
 
         interact = false;
 
@@ -312,7 +298,12 @@ public:
             cout << "hello there \n";
         }
 
-    }
+    }*/
+};
+
+class interactable {
+public:
+
 };
 
 class boundry {
@@ -322,10 +313,10 @@ public:
 
     boundry(string filename) {
         ifstream file;
-        float x;
-        float y;
-        float width;
-        float height;
+        double x;
+        double y;
+        double width;
+        double height;
         rectangleObject temp;
         file.open(filename);
         if (file.is_open()) {
@@ -339,19 +330,13 @@ public:
         }
     }
 
-    void print(float screenX, float screenY) {
+    void print(double screenX, double screenY) {
         for (rectangleObject test : blocks) {
             test.print(screenX, screenY);
         }
     }
 
-    void move(int deltaX, int deltaY) {
-        for (rectangleObject& test : blocks) {
-            test.move(deltaX, deltaY);
-        }
-    }
-
-    void colision(float x, float y, float width, float height) {
+    void colision(double x, double y, double width, double height) {
         for (int a = 0; a < 4; a++) {
             test[a] = 0;
         }

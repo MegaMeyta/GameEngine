@@ -15,30 +15,25 @@ bool mleft = false;
 bool mright = false;
 bool mup = false;
 bool mdown = false;
-float offsetx;
-float offsety;
 bool exitgame = false;
-float screenX;
-float screenY;
-float boundaryX = 100;
-float boundaryY = 100;
+double screenX;
+double screenY;
+double boundaryX = 100;
+double boundaryY = 100;
 
-void buttonPressed(int x, int y, int width, int height, int& paused);
+void buttonPressed(double x, double y, double width, double height, int& paused);
 
 void keyPressed(player& man, boundry& tester, npc& josh);
 
 void movePlayer(player& man, boundry& tester, npc& josh);
 
-void spawn(float spawnX, float spawnY);
+void spawn(double spawnX, double spawnY);
 
 void game()
 {
     int paused = 0;
 
     boundry tester("walls.txt");
-
-    offsetx = 0;
-    offsety = 0;
 
     interact = false;
 
@@ -58,7 +53,7 @@ void game()
     }
 
     settings.setTexture(gear);
-    float settingsScale = settings.getLocalBounds().width / (desktopWidth / 12);
+    double settingsScale = settings.getLocalBounds().width / (desktopWidth / 12);
     cout << settingsScale;
     settings.setScale(1 / settingsScale, 1 / settingsScale);
     
@@ -68,13 +63,7 @@ void game()
 
     menuUI pause;
 
-    float boundaryX;
-    float boundaryY;
-
     spawn(24, 24);
-
-    offsetx = screenX;
-    offsety = screenY;
 
     pause.createUI();
 
@@ -129,7 +118,7 @@ void game()
 }
 
 //This function dictates the function called when the mouse left click is registered 
-void buttonPressed(int x, int y, int width, int height, int& paused) {
+void buttonPressed(double x, double y, double width, double height, int& paused) {
 
     //Pauses game if mouse is clicked in the right place
     if (paused == 0) {
@@ -193,8 +182,6 @@ void keyPressed(player& man, boundry& tester, npc& josh) {
 
 //This function moves the player depending on which functions were enabled by keyPressed
 void movePlayer(player& man, boundry& tester, npc& josh) {
-    sf::Vector2f location = man.getLocation();
-    sf::Vector2f size = man.getSize();
     tester.colision(man.playerX, man.playerY, man.playerW, man.playerH);
     //josh.colision(location.x, location.y, size.x, size.y);
     if (mleft) {
@@ -205,9 +192,6 @@ void movePlayer(player& man, boundry& tester, npc& josh) {
             if (man.playerX <= boundaryX - (width / 2) && man.playerX >= width / 2) {
                 screenX = screenX - 0.2;
             }
-            //offsetx += 10;
-            //tester.move(10, 0);
-            //josh.move(10, 0);
         }
     }
 
@@ -245,7 +229,7 @@ void movePlayer(player& man, boundry& tester, npc& josh) {
     }
 
     if (interact) {
-        josh.interaction(location.x, location.y, size.x, size.y);
+        
     }
 
     Sleep(10);
@@ -258,7 +242,7 @@ void movePlayer(player& man, boundry& tester, npc& josh) {
 
 }
 
-void spawn(float spawnX, float spawnY) {
+void spawn(double spawnX, double spawnY) {
 
     if (spawnX >= boundaryX - (width / 2)) {
         screenX = boundaryX - width;
