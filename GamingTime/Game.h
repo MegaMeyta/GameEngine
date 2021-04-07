@@ -23,9 +23,15 @@ double boundaryY = 100;
 
 void buttonPressed(double x, double y, double width, double height, int& paused);
 
-void keyPressed(player& man, boundry& tester, npc& josh);
+void keyPressed(player& man, boundry& tester, interactable& josh);
 
-void movePlayer(player& man, boundry& tester, npc& josh);
+void keyPressedNew(sf::Keyboard::Key key, bool isPressed);
+
+void movePlayer(player& man, boundry& tester, interactable& josh, double time);
+
+void movePlayerNew(player& man, boundry& tester, interactable& josh, double time);
+
+void processEvents(int& paused);
 
 void spawn(double spawnX, double spawnY);
 
@@ -54,12 +60,11 @@ void game()
 
     settings.setTexture(gear);
     double settingsScale = settings.getLocalBounds().width / (desktopWidth / 12);
-    cout << settingsScale;
     settings.setScale(1 / settingsScale, 1 / settingsScale);
     
-    npc josh("joshua");
-
     player man(24, 24, 1,2);
+
+    interactable josh("interactable.txt");
 
     menuUI pause;
 
@@ -67,31 +72,24 @@ void game()
 
     pause.createUI();
 
-    int face;
+    sf::Clock clock;
+
+    double updateTime = 0;
+    double totalTime = 0;
+    int frames = 0;
 
     while (window.isOpen())
     {
-        face = 0;
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
+        processEvents(paused);
+
+        totalTime += clock.getElapsedTime().asSeconds();
+        updateTime += clock.restart().asSeconds();
+        while (updateTime >= 0.017) {
+            processEvents(paused);
+            movePlayerNew(man, tester, josh, 0.017);
+            updateTime -= 0.017;
+
         }
-
-        //Checks if left mouse button was clicked and calls apropriate function
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-
-            buttonPressed(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y, gameWidth, gameHeight, paused);
-            Sleep(100);
-        }
-
-        //Allows for key presses to be registered.
-        if (paused == 0) {
-            keyPressed(man, tester, josh);
-            movePlayer(man, tester, josh);
-        }
-
         if (exitgame == true) {
             exitgame = false;
             return;
@@ -103,7 +101,7 @@ void game()
         window.draw(mainBackground);
         tester.print(screenX, screenY);
         man.print(window, screenX, screenY);
-        josh.print();
+        josh.print(screenX, screenY);
 
         //Draws pause menu
         if (paused == 1) {
@@ -112,6 +110,7 @@ void game()
 
         window.draw(settings);
         window.display();
+        //cout << man.playerX - screenX << " " << man.playerY - screenY << " " << screenX << " " << screenY << "\n";
     }
 
     
@@ -157,7 +156,7 @@ void buttonPressed(double x, double y, double width, double height, int& paused)
 }
 
 //This function enables different functions depending on what keys were registered at one time
-void keyPressed(player& man, boundry& tester, npc& josh) {
+void keyPressed(player& man, boundry& tester, interactable& josh) {
     
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
         mleft = true;
@@ -180,66 +179,81 @@ void keyPressed(player& man, boundry& tester, npc& josh) {
     }
 }
 
+void keyPressedNew(sf::Keyboard::Key key, bool isPressed) {
+
+    if (key == sf::Keyboard::Left || key == sf::Keyboard::A) {
+        mleft = isPressed;
+    }
+
+    if (key == sf::Keyboard::Right || key == sf::Keyboard::D) {
+        mright = isPressed;
+    }
+
+    if (key == sf::Keyboard::Up || key == sf::Keyboard::W) {
+        mup = isPressed;
+    }
+
+    if (key == sf::Keyboard::Down || key == sf::Keyboard::S) {
+        mdown = isPressed;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+        interact = isPressed;
+    }
+}
+
 //This function moves the player depending on which functions were enabled by keyPressed
-void movePlayer(player& man, boundry& tester, npc& josh) {
+void movePlayerNew(player& man, boundry& tester, interactable& josh, double time) {
     tester.colision(man.playerX, man.playerY, man.playerW, man.playerH);
-    //josh.colision(location.x, location.y, size.x, size.y);
+    josh.colision(man.playerX, man.playerY, man.playerW, man.playerH);
+    cout << test[0] << " " << test[1] << " " << test[2] << " " << test[3] << "\n";
     if (mleft) {
         if (test[0] == 0) {
-            if (man.playerX > 0) {
-                man.move(-0.2, 0);
+            if (man.playerX >= 0.1) {
+                man.move(-playerVelocity * time, 0);
             }
             if (man.playerX <= boundaryX - (width / 2) && man.playerX >= width / 2) {
-                screenX = screenX - 0.2;
+                screenX = screenX - (playerVelocity * time);
             }
         }
     }
 
     if (mright) {
         if (test[1] == 0) {
-            if (man.playerX < boundaryX) {
-                man.move(0.2, 0);
+            if (man.playerX <= boundaryX - block - 0.1) {
+                man.move(playerVelocity * time, 0);
             }
             if (man.playerX <= boundaryX - (width / 2) && man.playerX >= width / 2) {
-                screenX = screenX + 0.2;
+                screenX = screenX + (playerVelocity * time);
             }
         }
     }
 
     if (mup) {
         if (test[2] == 0) {
-            if (man.playerY > 0) {
-                man.move(0, -0.2);
+            if (man.playerY >= 0.1) {
+                man.move(0, -playerVelocity * time);
             }
             if (man.playerY <= boundaryY - (height / 2) && man.playerY >= height / 2) {
-                screenY = screenY - 0.2;
+                screenY = screenY - (playerVelocity * time);
             }
         }
     }
 
     if (mdown) {
         if (test[3] == 0) {
-            if (man.playerY < boundaryY) {
-                man.move(0, 0.2);
+            if (man.playerY <= boundaryY) {
+                man.move(0, playerVelocity * time);
             }
             if (man.playerY <= boundaryY - (height / 2) && man.playerY >= height / 2) {
-                screenY = screenY + 0.2;
+                screenY = screenY + (playerVelocity * time);
             }
         }
     }
 
     if (interact) {
-        
+
     }
-
-    Sleep(10);
-
-    mright = false;
-    mleft = false;
-    mup = false;
-    mdown = false;
-    interact = false;
-
 }
 
 void spawn(double spawnX, double spawnY) {
@@ -264,4 +278,36 @@ void spawn(double spawnX, double spawnY) {
     }
 
     cout << screenX << " " << screenY << "\n";
+}
+
+void processEvents(int& paused) {
+    sf::Event event;
+    while (window.pollEvent(event))
+    {
+        switch (event.type) {
+        case sf::Event::KeyPressed:
+            if (event.key.code == sf::Keyboard::Escape) {
+                cout << paused << " " <<"escape\n";
+                if (paused == 0) {
+                    paused = 1;
+                }
+                else if (paused == 1) {
+                    paused = 0;
+                }
+            }
+            if (paused == 0) {
+                keyPressedNew(event.key.code, true);
+            }
+            break;
+        case sf::Event::KeyReleased:
+            keyPressedNew(event.key.code, false);
+            break;
+        case sf::Event::MouseLeft:
+            buttonPressed(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y, gameWidth, gameHeight, paused);
+            break;
+        case sf::Event::Closed:
+            window.close();
+            break;
+        }
+    }
 }

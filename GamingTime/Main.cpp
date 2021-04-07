@@ -48,7 +48,7 @@ int main()
             if (x < desktopWidth/5) {
                 //First button starts the game
                 if (y > button.getPosition().y && y < button.getPosition().y + button.getSize().y) {
-                    cout << "Start Game";
+                    cout << "Start Game\n";
                     game();
                 }
                 else if (y > button2.getPosition().y && y < button2.getPosition().y + button2.getSize().y) {

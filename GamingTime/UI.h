@@ -6,10 +6,19 @@
 #include <iostream>
 #include <fstream>
 #include "global.h"
+#include <cmath>
 
 using namespace std;
 
 int test[4];
+
+bool compareDouble(double x, double y, double epsilon){
+    if (abs(x - y) < epsilon) {
+        return true;
+    }
+    
+    return false;
+}
 
 void popUpMenu(int amount) {
 
@@ -172,22 +181,22 @@ public:
         objectH = 0;
     }
 
-    rectangleObject(double x, double y, double width, double height) {
+    rectangleObject(double x, double y, double width, double height, bool type) {
         objectX = x;
         objectY = y;
         objectW = width;
         objectH = height;
 
-        real = true;
+        real = type;
     }
 
-    void set(double x, double y, double width, double height) {
+    void set(double x, double y, double width, double height, bool type) {
         objectX = x;
         objectY = y;
         objectW = width;
         objectH = height;
 
-        real = true;
+        real = type;
     }
 
     void print(double screenX, double screenY) {
@@ -198,26 +207,26 @@ public:
         window.draw(shape);
     }
 
-    void colision(double x, double y, double width, double height){
+    void colision(double x, double y, double width, double height) {
         if (real == true) {
             double x1 = objectX;
             double x2 = objectX + objectW;
             double y1 = objectY;
             double y2 = objectY + objectH;
 
-            if (y > y1 - height && y < y2 && x < x2 +0.2 ) {
+            if (y + height >= y1 && y <= y2 && x <= x2 && x >= x2 - (objectW / 4)) {
                 test[0] = 1;
             }
 
-            if (y > y1 - height && y < y2 && x > x1 - width - 0.2) {
+            if (y > y1 - height && y < y2 && x <= x1 + (objectW / 4) && x + width >= x1) {
                 test[1] = 1;
             }
 
-            if (x > x1 - width && x < x2 && y < y2 + 0.2) {
+            if (x > x1 - width && x < x2 && y <= y2 && y >= y2 - (objectH / 4)) {
                 test[2] = 1;
             }
 
-            if (x > x1 - width && x < x2 && y > y1 - height - 0.2) {
+            if (x > x1 - width && x < x2 && y <= y1 + (objectH / 4) && y + height >= y1) {
                 test[3] = 1;
             }
         }
@@ -225,13 +234,15 @@ public:
 
 };
 
-class npc {
+/*class npc {
 public:
     string name;
     string age;
     string gender;
     rectangleObject block;
     double x;
+    double objectHeight;
+    double objectWidth;
     double y;
 
     npc(string filename) {
@@ -239,13 +250,19 @@ public:
         file.open("characters/" + filename + ".txt");
         string startx;
         string starty;
+        string temp;
         if (file.is_open()) {
             getline(file, name);
             getline(file, age);
             getline(file, gender);
-            getline(file, startx);
-            getline(file, starty);
-            x = stof(startx);
+            getline(file, temp);
+            x = stof(temp);
+            getline(file, temp);
+            y = stof(temp);
+            getline(file, temp);
+            objectWidth = stof(temp);
+            getline(file, temp);
+            objectHeight = stof(temp);
             y = stof(starty);
             block.set(stof(startx), stof(starty), 100, 100);
             cout << "Character, " + name + ", loaded.";
@@ -267,7 +284,7 @@ public:
         block.colision(x, y, width, height);
     }
 
-    /*void interaction(float x, float y, float width, float height) {
+    void interaction(float x, float y, float width, float height) {
 
         interact = false;
 
@@ -298,12 +315,59 @@ public:
             cout << "hello there \n";
         }
 
-    }*/
-};
+    }
+};*/
 
 class interactable {
 public:
+    string name;
+    rectangleObject block;
+    double x;
+    double objectHeight;
+    double objectWidth;
+    double y;
+    //This integer changes the behavior of an object
+    //1: A floor object (must be within bounds to interact and no colision)
+    //2: A normal object (must be against object to interact and has colisions)
+    //3: A wall object (must be against object to interact with and no colision)
+    int type;
 
+    interactable(string filename) {
+        ifstream file;
+        string temp;
+        file.open(filename);
+        if (file.is_open()) {
+            getline(file, name);
+            getline(file, temp);
+            x = stod(temp);
+            getline(file, temp);
+            y = stod(temp);
+            getline(file, temp);
+            objectWidth = stod(temp);
+            getline(file, temp);
+            objectHeight = stod(temp);
+            getline(file, temp);
+            type = stoi(temp);
+            if (type == 2) {
+                block.set(x, y, objectWidth, objectHeight, true);
+            }
+            else {
+                block.set(x, y, objectWidth, objectHeight, false);
+            }
+            cout << name << " " << x << " " << y << " " << objectWidth << " " << objectHeight << " " << type << "\n";
+        }
+        else {
+            cout << "File Doesn't Exist\n";
+        }
+    }
+
+    void print(double screenX, double screenY) {
+        block.print(screenX, screenY);
+    }
+
+    void colision(double x, double y, double width, double height) {
+        block.colision(x, y, width, height);
+    }
 };
 
 class boundry {
@@ -321,7 +385,7 @@ public:
         file.open(filename);
         if (file.is_open()) {
             while (file >> width >> height >> x >> y) {
-                temp.set(x, y, width, height);
+                temp.set(x, y, width, height, true);
                 blocks.push_back(temp);
             }
         }
