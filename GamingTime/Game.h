@@ -23,13 +23,9 @@ double boundaryY = 100;
 
 void buttonPressed(double x, double y, double width, double height, int& paused);
 
-void keyPressed(player& man, boundry& tester, interactable& josh);
-
-void keyPressedNew(sf::Keyboard::Key key, bool isPressed);
+void keyPressed(sf::Keyboard::Key key, bool isPressed);
 
 void movePlayer(player& man, boundry& tester, interactable& josh, double time);
-
-void movePlayerNew(player& man, boundry& tester, interactable& josh, double time);
 
 void processEvents(int& paused);
 
@@ -45,7 +41,7 @@ void game()
 
     //BACKGROUND
     sf::Texture paper;
-    sf::RectangleShape mainBackground(sf::Vector2f(desktopWidth, desktopHeight));
+    sf::RectangleShape mainBackground(sf::Vector2f(resolutionX, resolutionY));
     if (!paper.loadFromFile("paper.jpg")) {
         cout << "background texture error";
     }
@@ -59,7 +55,7 @@ void game()
     }
 
     settings.setTexture(gear);
-    double settingsScale = settings.getLocalBounds().width / (desktopWidth / 12);
+    double settingsScale = settings.getLocalBounds().width / (resolutionX / 12);
     settings.setScale(1 / settingsScale, 1 / settingsScale);
     
     player man(24, 24, 1,2);
@@ -86,7 +82,7 @@ void game()
         updateTime += clock.restart().asSeconds();
         while (updateTime >= 0.017) {
             processEvents(paused);
-            movePlayerNew(man, tester, josh, 0.017);
+            movePlayer(man, tester, josh, 0.017);
             updateTime -= 0.017;
 
         }
@@ -121,7 +117,7 @@ void buttonPressed(double x, double y, double width, double height, int& paused)
 
     //Pauses game if mouse is clicked in the right place
     if (paused == 0) {
-        if (x > 0 && y > 0 && x < desktopWidth / 12 && y < desktopWidth / 12) {
+        if (x > 0 && y > 0 && x < resolutionX / 12 && y < resolutionX / 12) {
             paused = 1;
             cout << "pause";
         }
@@ -145,7 +141,7 @@ void buttonPressed(double x, double y, double width, double height, int& paused)
             cout << "End Game";
             exitgame = true;
         }
-        else if (x < desktopWidth / 12 && y < desktopWidth / 12) {
+        else if (x < resolutionX / 12 && y < resolutionX / 12) {
             paused = 0;
             cout << "unpause";
         }
@@ -156,30 +152,7 @@ void buttonPressed(double x, double y, double width, double height, int& paused)
 }
 
 //This function enables different functions depending on what keys were registered at one time
-void keyPressed(player& man, boundry& tester, interactable& josh) {
-    
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-        mleft = true;
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-        mright = true;
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-        mup = true;
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-        mdown = true;
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
-        interact = true;
-    }
-}
-
-void keyPressedNew(sf::Keyboard::Key key, bool isPressed) {
+void keyPressed(sf::Keyboard::Key key, bool isPressed) {
 
     if (key == sf::Keyboard::Left || key == sf::Keyboard::A) {
         mleft = isPressed;
@@ -203,7 +176,7 @@ void keyPressedNew(sf::Keyboard::Key key, bool isPressed) {
 }
 
 //This function moves the player depending on which functions were enabled by keyPressed
-void movePlayerNew(player& man, boundry& tester, interactable& josh, double time) {
+void movePlayer(player& man, boundry& tester, interactable& josh, double time) {
     tester.colision(man.playerX, man.playerY, man.playerW, man.playerH);
     josh.colision(man.playerX, man.playerY, man.playerW, man.playerH);
     cout << test[0] << " " << test[1] << " " << test[2] << " " << test[3] << "\n";
@@ -296,11 +269,11 @@ void processEvents(int& paused) {
                 }
             }
             if (paused == 0) {
-                keyPressedNew(event.key.code, true);
+                keyPressed(event.key.code, true);
             }
             break;
         case sf::Event::KeyReleased:
-            keyPressedNew(event.key.code, false);
+            keyPressed(event.key.code, false);
             break;
         case sf::Event::MouseLeft:
             buttonPressed(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y, gameWidth, gameHeight, paused);

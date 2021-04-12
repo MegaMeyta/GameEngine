@@ -48,5 +48,6 @@
     <Text Include="walls.txt" />
     <Text Include="BoundaryExample.txt" />
     <Text Include="interactable.txt" />
+    <Text Include="settings.txt" />
   </ItemGroup>
 </Project>
