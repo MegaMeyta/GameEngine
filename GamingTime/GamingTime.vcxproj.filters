@@ -50,4 +50,9 @@
     <Text Include="interactable.txt" />
     <Text Include="settings.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="fortnite.mp3">
+      <Filter>Resource Files</Filter>
+    </Media>
+  </ItemGroup>
 </Project>

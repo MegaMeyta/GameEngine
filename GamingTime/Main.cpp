@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
+#include <SFML/Audio.hpp>
 #include <string.h>
 #include <iostream>
 #include <windows.h>
@@ -18,8 +19,6 @@ void settingsMenu();
 
 void resolutionOption(tgui::String resolution);
 
-void resetList(tgui::GuiBase& gui, tgui::ListBox::Ptr& listBox);
-
 int settingsExit = 0;
 
 /// <summary>
@@ -28,7 +27,7 @@ int settingsExit = 0;
 /// </summary>
 class menu {
 public:
-    
+
     sf::RectangleShape background;
     sf::RectangleShape Title;
     sf::RectangleShape button;
@@ -94,6 +93,12 @@ menu mainmenu;
 int main()
 {
 
+    sf::Music fortnite;
+    if(!fortnite.openFromFile("fortnite.wav"))
+        cout << "music did not load";
+    fortnite.play();
+    fortnite.setLoop(true);
+
     settings::readSettings();
 
     mainmenu.resize();
@@ -157,15 +162,14 @@ void settingsMenu() {
     //Generates the list box from available display modes (resolutions)
     auto listBox = tgui::ListBox::create();
     listBox->setSize({"40%","40%"});
-    listBox->setItemHeight(20);
-    listBox->setPosition({"20%","20%"});
+    listBox->setItemHeight(resolutionY/16);
+    listBox->setPosition({"30%","10%"});
+    listBox->setTextSize((resolutionY*5)/192);
     std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
     for (std::size_t i = 0; i < modes.size(); ++i)
     {
         sf::VideoMode mode = modes[i];
-        std::cout << "Mode #" << i << "\t"
-            << mode.width << "x" << mode.height << " \t "
-            << mode.bitsPerPixel << " bpp" << std::endl;
+        //std::cout << "Mode #" << i << "\t" << mode.width << "x" << mode.height << " \t " << mode.bitsPerPixel << " bpp" << std::endl;
         listBox->addItem(to_string(mode.width) + "x" + to_string(mode.height));
     }
     listBox->onDoubleClick(resolutionOption);

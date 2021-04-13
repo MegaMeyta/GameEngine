@@ -1,4 +1,4 @@
-resolution_X:640
-resolution_Y:480
+resolution_X:1680
+resolution_Y:1050
 fullscreen:0
 sound:0

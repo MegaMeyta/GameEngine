@@ -3,6 +3,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
+#include <SFML/Audio.hpp>
 #include <string.h>
 #include <iostream>
 #include <windows.h>
