@@ -1,3 +1,5 @@
+/*This header file contains the function for level loading as well as the functions for movement and keyboard/mouse handeling*/
+
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -31,6 +33,9 @@ void processEvents(int& paused);
 
 void spawn(double spawnX, double spawnY);
 
+/// <summary>
+/// The main game function for the moment (will become the level function)
+/// </summary>
 void game()
 {
     int paused = 0;
@@ -112,7 +117,14 @@ void game()
     
 }
 
-//This function dictates the function called when the mouse left click is registered 
+/// <summary>
+/// processes mouse position when left mouse button is pressed and runs the according function.
+/// </summary>
+/// <param name="x">Mouse position on the x axis</param>
+/// <param name="y">mouse position on the y axis</param>
+/// <param name="width">window width</param>
+/// <param name="height">window height</param>
+/// <param name="paused">whether the game is paused or not</param>
 void buttonPressed(double x, double y, double width, double height, int& paused) {
 
     //Pauses game if mouse is clicked in the right place
@@ -151,7 +163,11 @@ void buttonPressed(double x, double y, double width, double height, int& paused)
     }
 }
 
-//This function enables different functions depending on what keys were registered at one time
+/// <summary>
+/// enables true or false for the booleans attached to each key depending on whether they were pressed
+/// </summary>
+/// <param name="key">the key that was pressed</param>
+/// <param name="isPressed">whether or not the key was pressed or released</param>
 void keyPressed(sf::Keyboard::Key key, bool isPressed) {
 
     if (key == sf::Keyboard::Left || key == sf::Keyboard::A) {
@@ -175,7 +191,13 @@ void keyPressed(sf::Keyboard::Key key, bool isPressed) {
     }
 }
 
-//This function moves the player depending on which functions were enabled by keyPressed
+/// <summary>
+/// Moves the player based on which key boleans are true and how much real time has passed
+/// </summary>
+/// <param name="man">the player character created for the level</param>
+/// <param name="tester">the boundaries created for the level</param>
+/// <param name="josh">an interactable currently in there for testing</param>
+/// <param name="time">the time that has passed since the last update</param>
 void movePlayer(player& man, boundry& tester, interactable& josh, double time) {
     tester.colision(man.playerX, man.playerY, man.playerW, man.playerH);
     josh.colision(man.playerX, man.playerY, man.playerW, man.playerH);
@@ -229,6 +251,11 @@ void movePlayer(player& man, boundry& tester, interactable& josh, double time) {
     }
 }
 
+/// <summary>
+/// places the character in the game and positions the boundaries accordingly
+/// </summary>
+/// <param name="spawnX">x coordinate for player spawn</param>
+/// <param name="spawnY">y coordinate for player spawn</param>
 void spawn(double spawnX, double spawnY) {
 
     if (spawnX >= boundaryX - (width / 2)) {
@@ -253,6 +280,10 @@ void spawn(double spawnX, double spawnY) {
     cout << screenX << " " << screenY << "\n";
 }
 
+/// <summary>
+/// proccesses events
+/// </summary>
+/// <param name="paused">flag for whether the game is paused</param>
 void processEvents(int& paused) {
     sf::Event event;
     while (window.pollEvent(event))

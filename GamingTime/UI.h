@@ -1,3 +1,4 @@
+/*This header file contains most of the objects used to create the game level and character*/
 #pragma once
 
 #include <SFML/Graphics.hpp>
@@ -12,6 +13,13 @@ using namespace std;
 
 int test[4];
 
+/// <summary>
+/// Compares two doubles
+/// </summary>
+/// <param name="x">number being compared</param>
+/// <param name="y">number being compared</param>
+/// <param name="epsilon">maximum difference</param>
+/// <returns>whether or not the two doubles are within the given difference</returns>
 bool compareDouble(double x, double y, double epsilon){
     if (abs(x - y) < epsilon) {
         return true;
@@ -24,6 +32,9 @@ void popUpMenu(int amount) {
 
 }
 
+/// <summary>
+/// The pause menu
+/// </summary>
 class menuUI {
 
 public:
@@ -39,19 +50,19 @@ public:
 
     void createUI() {
         //SIZE
-        button.setSize(sf::Vector2f(desktopWidth / 5, desktopHeight / 8));
-        button2.setSize(sf::Vector2f(desktopWidth / 5, desktopHeight / 8));
-        button3.setSize(sf::Vector2f(desktopWidth / 5, desktopHeight / 8));
-        button4.setSize(sf::Vector2f(desktopWidth / 5, desktopHeight / 8));
-        button5.setSize(sf::Vector2f(desktopWidth / 5, desktopHeight / 8));
-        tint.setSize(sf::Vector2f(desktopWidth, desktopHeight));
+        button.setSize(sf::Vector2f(resolutionX / 5, resolutionY / 8));
+        button2.setSize(sf::Vector2f(resolutionX / 5, resolutionY / 8));
+        button3.setSize(sf::Vector2f(resolutionX / 5, resolutionY / 8));
+        button4.setSize(sf::Vector2f(resolutionX / 5, resolutionY / 8));
+        button5.setSize(sf::Vector2f(resolutionX / 5, resolutionY / 8));
+        tint.setSize(sf::Vector2f(resolutionX, resolutionY));
 
         //POSITION
-        button.setPosition(0, (desktopHeight / 8) * 7);
-        button2.setPosition(1 * (desktopWidth / 5), (desktopHeight / 8) * 7);
-        button3.setPosition(2 * (desktopWidth / 5), (desktopHeight / 8) * 7);
-        button4.setPosition(3 * (desktopWidth / 5), (desktopHeight / 8) * 7);
-        button5.setPosition(4 * (desktopWidth / 5), (desktopHeight / 8) * 7);
+        button.setPosition(0, (resolutionY / 8) * 7);
+        button2.setPosition(1 * (resolutionX / 5), (resolutionY / 8) * 7);
+        button3.setPosition(2 * (resolutionX / 5), (resolutionY / 8) * 7);
+        button4.setPosition(3 * (resolutionX / 5), (resolutionY / 8) * 7);
+        button5.setPosition(4 * (resolutionX / 5), (resolutionY / 8) * 7);
 
         //COLOR
         button.setFillColor(sf::Color::Red);
@@ -81,7 +92,7 @@ public:
         textRect = text.getLocalBounds();
         text.setOrigin(textRect.left + textRect.width / 2.0f,
             textRect.top + textRect.height / 2.0f);
-        text.setPosition(desktopWidth / 2, desktopHeight / 2);
+        text.setPosition(resolutionX / 2, resolutionY / 2);
     }
 
     void printUI() {
@@ -94,6 +105,11 @@ public:
         window.draw(text);
     }
 
+    /// <summary>
+    /// Resizes the UI
+    /// </summary>
+    /// <param name="x">the x scale</param>
+    /// <param name="y">the y scale</param>
     void resizeUI(float x, float y) {
         
         button.setScale(x,y);
@@ -101,11 +117,11 @@ public:
         button3.setScale(x, y);
         button4.setScale(x, y);
         button5.setScale(x, y);
-        button.setPosition(0, (desktopHeight / 8) * 7 * y);
-        button2.setPosition(1 * (desktopWidth / 5) * x, (desktopHeight / 8) * 7 * y);
-        button3.setPosition(2 * (desktopWidth / 5) * x, (desktopHeight / 8) * 7 * y);
-        button4.setPosition(3 * (desktopWidth / 5) * x, (desktopHeight / 8) * 7 * y);
-        button5.setPosition(4 * (desktopWidth / 5) * x, (desktopHeight / 8) * 7 * y);
+        button.setPosition(0, (resolutionY / 8) * 7 * y);
+        button2.setPosition(1 * (resolutionX / 5) * x, (resolutionY / 8) * 7 * y);
+        button3.setPosition(2 * (resolutionX / 5) * x, (resolutionY / 8) * 7 * y);
+        button4.setPosition(3 * (resolutionX / 5) * x, (resolutionY / 8) * 7 * y);
+        button5.setPosition(4 * (resolutionX / 5) * x, (resolutionY / 8) * 7 * y);
         button.setOutlineThickness(button.getSize().x / 50);
         button2.setOutlineThickness(button.getSize().x / 50);
         button3.setOutlineThickness(button.getSize().x / 50);
@@ -120,7 +136,7 @@ public:
         textRect = text.getLocalBounds();
         text.setOrigin(textRect.left + textRect.width / 2.0f,
             textRect.top + textRect.height / 2.0f);
-        text.setPosition(desktopWidth / 2, desktopHeight / 2);
+        text.setPosition(resolutionX / 2, resolutionY / 2);
     }
 
     void clickUI(int button) {
@@ -128,6 +144,9 @@ public:
     }
 };
 
+/// <summary>
+/// The object that handles the parameters for the player
+/// </summary>
 class player {
 public:
     sf::RectangleShape guy;
@@ -136,6 +155,13 @@ public:
     double playerH;
     double playerW;
     
+    /// <summary>
+    /// The constructor
+    /// </summary>
+    /// <param name="x">position on x axis</param>
+    /// <param name="y">position on y axis</param>
+    /// <param name="w">width based on grid squares</param>
+    /// <param name="h">height based on grid squares</param>
     player(double x, double y, double w, double h) {
         playerX = x;
         playerY = y;
@@ -143,11 +169,22 @@ public:
         playerH = h;
     }
 
+    /// <summary>
+    /// Moves the player
+    /// </summary>
+    /// <param name="x">how far the player moves in the x direction</param>
+    /// <param name="y">how far the player moves in the y direction</param>
     void move(double x, double y) {
         playerX += x;
         playerY += y;
     }
 
+    /// <summary>
+    /// draws the player on the window
+    /// </summary>
+    /// <param name="window">the window to be drawn on</param>
+    /// <param name="screenX">screen x position on the grid </param>
+    /// <param name="screenY">screen y position on the grid</param>
     void print(sf::RenderWindow& window, double screenX, double screenY) {
         guy.setSize(sf::Vector2f(playerW * block, playerH * block));
         guy.setPosition((playerX - screenX)*block, (playerY - screenY)*block);
@@ -155,15 +192,26 @@ public:
         window.draw(guy);
     }
 
+    /// <summary>
+    /// Gets player location
+    /// </summary>
+    /// <returns>vector containing player x and y location</returns>
     sf::Vector2f getLocation() {
         return guy.getPosition();
     }
 
+    /// <summary>
+    /// gets player size
+    /// </summary>
+    /// <returns>vector containing player width and height</returns>
     sf::Vector2f getSize() {
         return guy.getSize();
     }
 };
 
+/// <summary>
+/// a basic rectangle object and functions to manipulate it
+/// </summary>
 class rectangleObject {
 public:
     
@@ -173,6 +221,9 @@ public:
     double objectW;
     double objectH;
 
+    /// <summary>
+    /// Creates a blank rectangle object
+    /// </summary>
     rectangleObject() {
         real = false;
         objectX = 0;
@@ -181,6 +232,14 @@ public:
         objectH = 0;
     }
 
+    /// <summary>
+    /// Creates a rectangle object with the given parameters
+    /// </summary>
+    /// <param name="x">x position</param>
+    /// <param name="y">y position</param>
+    /// <param name="width">rectangle width</param>
+    /// <param name="height">rectangle height</param>
+    /// <param name="type">whether the object can be collided with</param>
     rectangleObject(double x, double y, double width, double height, bool type) {
         objectX = x;
         objectY = y;
@@ -190,6 +249,14 @@ public:
         real = type;
     }
 
+    /// <summary>
+    /// Resets or sets the parameters of a already created rectangle object
+    /// </summary>
+    /// <param name="x">x position</param>
+    /// <param name="y">y position</param>
+    /// <param name="width">rectangle width</param>
+    /// <param name="height">rectangle height</param>
+    /// <param name="type">whether the object can be collided with</param>
     void set(double x, double y, double width, double height, bool type) {
         objectX = x;
         objectY = y;
@@ -199,6 +266,11 @@ public:
         real = type;
     }
 
+    /// <summary>
+    /// draws the rectangle object on the screen after translating grid co-ordinates to pixel coordinates
+    /// </summary>
+    /// <param name="screenX">x position of screen on the grid</param>
+    /// <param name="screenY">y position of screen on the grid</param>
     void print(double screenX, double screenY) {
         sf::RectangleShape shape;
         shape.setPosition((objectX - screenX) * block, (objectY - screenY) * block);
@@ -207,6 +279,13 @@ public:
         window.draw(shape);
     }
 
+    /// <summary>
+    /// calculates collision of player and rectangle and records collision direction in 1x4 array
+    /// </summary>
+    /// <param name="x">player x position</param>
+    /// <param name="y">player y position</param>
+    /// <param name="width">player width</param>
+    /// <param name="height">player height</param>
     void colision(double x, double y, double width, double height) {
         if (real == true) {
             double x1 = objectX;
@@ -318,6 +397,9 @@ public:
     }
 };*/
 
+/// <summary>
+/// class that will handle interactable objects in the level
+/// </summary>
 class interactable {
 public:
     string name;
@@ -332,6 +414,10 @@ public:
     //3: A wall object (must be against object to interact with and no colision)
     int type;
 
+    /// <summary>
+    /// Constructs the interactable based on the file specified
+    /// </summary>
+    /// <param name="filename">the file that contains the data for the interactable</param>
     interactable(string filename) {
         ifstream file;
         string temp;
@@ -361,15 +447,30 @@ public:
         }
     }
 
+    /// <summary>
+    /// draws the interactable
+    /// </summary>
+    /// <param name="screenX">screen x position</param>
+    /// <param name="screenY">screen y position</param>
     void print(double screenX, double screenY) {
         block.print(screenX, screenY);
     }
 
+    /// <summary>
+    /// runs the function for object collision
+    /// </summary>
+    /// <param name="x">player x position</param>
+    /// <param name="y">player y positon</param>
+    /// <param name="width">player width</param>
+    /// <param name="height">player height</param>
     void colision(double x, double y, double width, double height) {
         block.colision(x, y, width, height);
     }
 };
 
+/// <summary>
+/// The boundaries for the level
+/// </summary>
 class boundry {
 public:
     vector<rectangleObject> blocks;
